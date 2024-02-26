@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block catalog %}
+
+    <div class="categories">
+        <h4 style="text-decoration-line: underline">Категории книг</h4>
+        <div class="list">
+            {% for name_genres in genres %}
+                <ul style="font-size: 20px">
+                    <a href="{{ name_genres.get_absolute_url }}" style="color: black">{{ name_genres.genre }}</a>
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+
+
+
+{% endblock %}

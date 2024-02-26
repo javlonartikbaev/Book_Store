@@ -1,0 +1,54 @@
+/* Стили для формы */
+.search-extended {
+    margin-top: 20px;
+}
+
+/* Стили для полей ввода */
+.search-extended input[type="text"],
+.search-extended input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Стили для placeholder */
+.search-extended input[type="text"]::placeholder,
+.search-extended input[type="date"]::placeholder {
+    color: #999;
+}
+
+/* Стили для кнопки отправки */
+.search-extended button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Стили при фокусе */
+.search-extended input[type="text"]:focus,
+.search-extended input[type="date"]:focus,
+.search-extended button[type="submit"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Дополнительные стили для каждого отдельного поля ввода */
+.search-extended .book_name,
+.search-extended .author_name,
+.search-extended .start_date {
+    margin-bottom: 20px;
+}
+
+/* Стили для меток */
+.search-extended label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}

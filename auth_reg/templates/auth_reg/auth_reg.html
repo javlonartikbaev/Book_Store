@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reg_style.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-header">Регистрация</h2>
+
+        <form class="auth_reg" method="POST">
+            {% csrf_token %}
+            <div class="form-field">
+                {{ reg_form.first_name }}
+            </div>
+            <div class="form-field">
+                {{ reg_form.second_name }}
+            </div>
+            <div class="form-field">
+                {{ reg_form.email }}
+            </div>
+
+            <div class="form-field">
+                {{ reg_form.username }}
+            </div>
+
+            <div class="form-field">
+                {{ reg_form.password }}
+            </div>
+
+            <button  type="submit">Sign Up</button>
+        </form>
+    </div>
+
+</body>
+</html>
+

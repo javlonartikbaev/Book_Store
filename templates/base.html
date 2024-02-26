@@ -1,0 +1,82 @@
+{%load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon"
+          href="{% static  'img/pngwing_com.png' %}" type="image/x-icon"/>
+    
+    <title>Книжный магазин</title>
+    <link
+            type="text/css"
+            rel="stylesheet"
+            href="{% static 'css/style.css' %}"
+    />
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <script src="#" defer></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <!-- ICONS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <!-- ICONS -->
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a class="textLogo" href="{% url 'home' %}" style="text-decoration: none"><img src="{%static 'img/pngwing_com.png'%}" alt="">
+            <strong style="font-size: 30px; color: black">BookStore</strong></a>
+    </div>
+
+    <form class="search" action="{% url 'search_books' %}" method="GET">
+        {% csrf_token %}
+        {{ form_search }}
+        <button type="submit">Найти</button>
+    </form>
+
+    <div class="menu">
+        <ul>
+            <li><a href="{% url  'home' %}">Главная</a></li>
+            <li><a href="{% url 'catalog' %}">Каталог</a></li>
+            <li><a href="{% url 'extended_search' %}">Расширинный поиск</a></li>
+            <li class="reg"><a href="{% url 'reg'%}">Регистрация</a></li>
+            <li class="auto"><a href="#">Войти</a></li>
+        </ul>
+    </div>
+</header>
+<main class="selected-main">
+    {% block book_list %}{% endblock %}
+    {% block info %}{% endblock %}
+    {% block catalog %}{% endblock %}
+    {% block selected_catalog %}{% endblock %}
+    {% block extended_search %}{% endblock %}
+</main>
+<footer class="foot">
+    <div class="social">
+        <ul>
+            <li>
+                <a href="#"
+                ><i class="fa fa-facebook" aria-hidden="true"></i> Facebook</a
+                >
+            </li>
+            <li>
+                <a href="#"
+                ><i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a>
+            </li>
+            <li>
+                <a href="#"
+                ><i class="fa fa-instagram" aria-hidden="true"></i> Instagram</a
+                >
+            </li>
+        </ul>
+    </div>
+    <div class="info">
+        <p>© {{ current_year }} Книжный магазин. Все права защищены.</p>
+    </div>
+</footer>
+</body>
+</html>

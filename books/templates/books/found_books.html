@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block book_list %}
+
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+
+        {% for book in found_books %}
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div class="card-header py-3 text-white bg-primary border-primary">
+                        <h5 class="my-0 fw-normal">{{ book.book_name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <img src="{{ book.book_img.url }}" class="book-image" alt="">
+                        <h1 class="card-title pricing-card-title">{{ book.price }}$</h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>{{ book.author_name }}</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <a style="color:#ffffff;"
+                           href="{{ book.get_absolute_url }}">
+                            <button type="button" class="w-100 btn btn-lg btn-primary custom-buy">Подробнее
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

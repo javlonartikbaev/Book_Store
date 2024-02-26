@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block info %}
+    <div class="book-info">
+        <h2>{{ book.book_name }}</h2>
+        <p>{{ book.book_info }}</p>
+        <img class="image" src= "{{ book.book_img.url }}">
+        <button type="button" class="btn btn-primary">Купить</button>
+    </div>
+{% endblock %}

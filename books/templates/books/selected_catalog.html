@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block selected_catalog %}
+    <div class ="sel-catalog">
+        <div class="categories-selected">
+            <h4 style="text-decoration-line: underline">Категории книг</h4>
+            <div class="list">
+
+                {% for name_genres in genres_list %}
+                    <ul style="font-size: 20px">
+                        <a href="{{ name_genres.get_absolute_url }}" style="color: black">{{ name_genres.genre }}</a>
+                    </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- books -->
+
+        <div class="selected_catalog">
+            {% for book in page_obj %}
+                <div class="col-selected">
+                    <div class="card mb-4 rounded-3 shadow-sm border-primary">
+                        <div class="card-header py-3 text-white bg-primary border-primary">
+                            <h5 class="my-0 fw-normal">{{ book.book_name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <img src="{{ book.book_img.url }}" class="book-image" alt="">
+                            <h1 class="card-title pricing-card-title">{{ book.price }}$</h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>{{ book.author_name }}</li>
+                            </ul>
+
+                        </div>
+                        <div>
+                            <button type="button" class="w-100 btn btn-lg btn-primary custom-buy"><a
+                                    style="color:#ffffff;"
+                                    href="{{ book.get_absolute_url }}">Подробнее</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="pagination">
+        <div class="pagination-second">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo;</a>
+            <a href="?page={{ page_obj.previous_page_number }}">‹</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">›</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+        {% endif %}
+    </span>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

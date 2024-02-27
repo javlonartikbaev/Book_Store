@@ -11,5 +11,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("books.urls")),
     path("extended_search/", include("search.urls")),
-    path("registration/", include("auth_reg.urls"))
+    path("registration/", include("auth_reg.urls")),
+    path('accounts/', include('allauth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -42,8 +42,7 @@ class Genre(models.Model):
 
 
 class Customers(models.Model):
-    first_name = models.CharField(max_length=100)
-    second_name = models.CharField(max_length=100)
+
     email = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=100)
 

@@ -8,4 +8,7 @@ from django.conf import settings
 from auth_reg import views
 
 
-urlpatterns = [path("registration/", views.reg_view, name="reg")]
+urlpatterns = [
+    path("current_user/", views.user, name="current_user"),
+    path("current_user/add_data", views.add_form, name="add_data"),
+]

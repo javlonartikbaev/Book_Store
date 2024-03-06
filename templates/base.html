@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="shortcut icon"
           href="{% static  'img/pngwing_com.png' %}" type="image/x-icon"/>
-    
+
     <title>Книжный магазин</title>
     <link
             type="text/css"
@@ -28,7 +28,8 @@
 <body>
 <header>
     <div class="logo">
-        <a class="textLogo" href="{% url 'home' %}" style="text-decoration: none"><img src="{%static 'img/pngwing_com.png'%}" alt="">
+        <a class="textLogo" href="{% url 'home' %}" style="text-decoration: none"><img
+                src="{%static 'img/pngwing_com.png'%}" alt="">
             <strong style="font-size: 30px; color: black">BookStore</strong></a>
     </div>
 
@@ -43,8 +44,17 @@
             <li><a href="{% url  'home' %}">Главная</a></li>
             <li><a href="{% url 'catalog' %}">Каталог</a></li>
             <li><a href="{% url 'extended_search' %}">Расширинный поиск</a></li>
-            <li class="reg"><a href="{% url 'reg'%}">Регистрация</a></li>
-            <li class="auto"><a href="#">Войти</a></li>
+
+            {%if user.is_authenticated %}
+            <li class="auto"><a href="{%url 'current_user' %}"><img src="{%static 'img/icons8-пользователь-мужчина-в-кружке-50.png'%}" alt=""></a></li>
+            <li class="auto"><a href="{%url 'account_logout' %}">Выйти</a></li>
+            {% else %}
+            <li class="reg"><a href="{% url 'account_signup'%}">Регистрация</a></li>
+
+            <li class="auto"><a href="{%url 'account_login'%}">Войти</a></li>
+            {% endif %}
+
+
         </ul>
     </div>
 </header>
@@ -54,6 +64,7 @@
     {% block catalog %}{% endblock %}
     {% block selected_catalog %}{% endblock %}
     {% block extended_search %}{% endblock %}
+    {% block current_user %}{% endblock %}
 </main>
 <footer class="foot">
     <div class="social">

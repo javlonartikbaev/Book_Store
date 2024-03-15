@@ -12,4 +12,7 @@ class SearchForm(forms.Form):
     )
     
 
-
+class AddToCartForm(forms.Form):
+    book_id = forms.IntegerField(widget=forms.HiddenInput())
+    book_name = forms.CharField(widget=forms.HiddenInput())
+    book_price = forms.CharField(widget=forms.HiddenInput())

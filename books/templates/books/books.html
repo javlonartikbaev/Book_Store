@@ -1,49 +1,151 @@
 {% extends 'base.html' %}
+
 {% block book_list %}
-    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        {% for book in page_obj %}
-            <div class="col">
-                <div class="card mb-4 rounded-3 shadow-sm border-primary">
-                    <div class="card-header py-3 text-white bg-primary border-primary">
-                        <h5 class="my-0 fw-normal">{{ book.book_name }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <img src="{{ book.book_img }}" class="book-image" alt="">
-                        <h1 class="card-title pricing-card-title">{{ book.price }}$</h1>
-                        <ul class="list-unstyled mt-3 mb-4">
-                            <li>{{ book.author_name }}</li>
-                        </ul>
-
-                    </div>
-                    <div>
-                        <a style="color:#ffffff;"
-                           href="{{ book.get_absolute_url }}">
-                            <button type="button" class="w-100 btn btn-lg btn-primary custom-buy">Подробнее
-
-                        </button></a>
-                    </div>
-                </div>
+<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+    {% for book in page_obj %}
+    <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm border-primary">
+            <div class="card-header py-3 text-white bg-primary border-primary">
+                <h5 class="my-0 fw-normal">{{ book.book_name }}</h5>
             </div>
-        {% endfor %}
+            <div class="card-body">
+                <img src="{{ book.book_img }}" class="book-image" alt="">
+                <h1 class="card-title pricing-card-title">{{ book.price }}$</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>{{ book.author_name }}</li>
+                </ul>
+            </div>
+            <div style="background-color: greenyellow !important; : greenyellow">
 
-        <div class="pagination">
-            <div class="pagination-second">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo;</a>
-            <a href="?page={{ page_obj.previous_page_number }}">‹</a>
-        {% endif %}
 
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">›</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
-        {% endif %}
-    </span>
+            </div>
+            <div>
+                <a style="color:#ffffff;"
+                   href="{{ book.get_absolute_url }}">
+                    <button type="button" class="w-100 btn btn-lg btn-primary custom-buy">Подробнее</button>
+                </a>
+            </div>
+            <div style="background-color: greenyellow !important;">
+                <!-- Добавление кнопки "Добавить в корзину" -->
+                <button style="color: greenyellow" type="button" class="w-100 btn btn-lg btn-primary custom-add-to-cart"
+                        data-book-id="{{ book.id }}" data-book-name="{{ book.book_name }}"
+                        data-book-price="{{ book.price }}" data-author-name="{{ book.author_name }}">
+                    Добавить
+                </button>
             </div>
         </div>
     </div>
+    {% endfor %}
+</div>
+
+<!-- Доковая панель корзины -->
+<div id="cart-panel" class="mb-3">
+    <!-- Здесь будут отображаться выбранные книги и их цена -->
+</div>
+<form id="order-form" action="{% url 'submit_order' %}" method="post">
+    {% csrf_token %}
+
+    <button type="submit" class="btn btn-lg btn-success">Добавить в корзину</button>
+</form>
+
+<div class="pagination">
+    <div class="pagination-second">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo;</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">‹</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                {% endif %}
+            </span>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+
+    function addToCart(bookId, bookName, bookPrice, authorName) {
+        let item = {
+            book_id: bookId,
+            book_name: bookName,
+            book_price: bookPrice,
+            author_name: authorName,
+            quantity: 1
+        };
+
+        // Check if the book is already in the cart
+        let existingItem = cart.find(i => i.book_id === bookId);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push(item);
+        }
+
+        updateCartPanel();
+    }
+
+    function removeFromCart(bookId) {
+        cart = cart.filter(item => item.book_id !== bookId);
+        updateCartPanel();
+    }
+
+    function updateCartPanel() {
+        let cartPanel = document.getElementById('cart-panel');
+        cartPanel.innerHTML = '';
+
+        let totalCost = 0;
+        cart.forEach(item => {
+            let itemCost = item.book_price * item.quantity;
+            totalCost += itemCost;
+            cartPanel.innerHTML += `<div>${item.book_name} - ${item.quantity} x ${item.book_price}$ = ${itemCost}$ <button onclick="removeFromCart('${item.book_id}')">Удалить</button></div>`;
+        });
+
+        cartPanel.innerHTML += `<div><strong>Общая сумма: ${totalCost}$</strong></div>`;
+    }
+
+    document.querySelectorAll('.custom-add-to-cart').forEach(button => {
+        button.addEventListener('click', function () {
+            let bookId = this.getAttribute('data-book-id');
+            let bookName = this.getAttribute('data-book-name');
+            let bookPrice = parseFloat(this.getAttribute('data-book-price'));
+            let authorName = this.getAttribute('data-author-name');
+            addToCart(bookId, bookName, bookPrice, authorName);
+        });
+    });
+
+    document.getElementById('order-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let formData = new FormData(this);
+        cart.forEach(item => {
+            formData.append('book_id', item.book_id);
+            formData.append('book_name', item.book_name);
+            formData.append('book_price', item.book_price);
+            formData.append('author_name', item.author_name);
+            formData.append('quantity', item.quantity);
+        });
+
+        // Submit the form
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+            }
+        }).then(response => {
+            if (response.ok) {
+                // Clear the cart and update the panel after successful order submission
+                cart = [];
+                updateCartPanel();
+            }
+        });
+    });
+</script>
 {% endblock %}

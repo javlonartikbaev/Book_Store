@@ -1,11 +1,19 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
 from .models import Books, Genre
 import datetime
 from django.core.paginator import Paginator
-from .forms import SearchForm
+from .forms import SearchForm, AddToCartForm
 from django.db.models import Q
+import json
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Orders, LastOrders
+
+from django.db.models import Sum,F, ExpressionWrapper, FloatField
+from django.utils import timezone
+
 
 def books(request):
     return render(request, "books/books.html")
@@ -93,7 +101,7 @@ def selected_catalog(request, catalog_slug):
 def search_books(request):
     current_year = datetime.date.today().year
     search_form = SearchForm(request.GET)
-    
+
     if search_form.is_valid():
         search_query = search_form.cleaned_data["book_name"]
         if search_query:
@@ -111,3 +119,77 @@ def search_books(request):
     }
 
     return render(request, "books/found_books.html", data)
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+
+
+def order(request):
+    return render(request, "template.html")
+
+
+def submit_order(request):
+    if request.method == "POST":
+
+
+        book_ids = request.POST.getlist("book_id")
+        book_names = request.POST.getlist("book_name")
+        book_prices = request.POST.getlist("book_price")
+        author_names = request.POST.getlist("author_name")
+        quantities = request.POST.getlist("quantity")
+        for i in range(len(book_ids)):
+            order = Orders(
+                customer_id=request.user,
+                book_id=book_ids[i],
+                price=book_prices[i],
+                quantity=quantities[i],
+                #                address=address
+            )
+            order.save()
+
+        return JsonResponse({"message": "Успешно"}, status=200)
+    else:
+        return JsonResponse({"error": "Ошибка"}, status=405)
+
+
+
+
+def ordered_books(request):
+    orders = Orders.objects.filter(customer_id_id=request.user)
+    total_price = orders.annotate(
+        total_price=ExpressionWrapper(
+            F('price') * F('quantity'), output_field=FloatField()
+        )
+    ).aggregate(total=Sum("total_price"))["total"] or 0
+    data = {
+        "orders": orders,
+        "total_price": total_price,
+    }
+    return render(request, "profile/profile.html", data)
+
+def save_order(request):
+    if request.method == "POST":
+        address = request.POST.get("address")
+        total_price = request.POST.get("total_price")
+        customer_id = request.user.id
+
+        orders = Orders.objects.filter(customer_id=customer_id)
+
+        last_order = LastOrders.objects.create(
+            customer_id_id=customer_id,
+            all_price=total_price,
+            created_at=timezone.now(),
+            status="ожидание",
+            address=address,
+        )
+
+        for order in orders:
+            last_order.basket.add(order)
+
+
+
+        return redirect("home")
+    else:
+
+        return render(request, "profile/profile.html")

@@ -13,5 +13,6 @@ urlpatterns = [
     path(
         "catalog/<slug:catalog_slug>", views.selected_catalog, name="selected_catalog"
     ),
-
+    path("customers/order_books", views.submit_order, name="submit_order"),
+    path("customers/save_order", views.save_order, name='save_order'),
 ]

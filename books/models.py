@@ -6,6 +6,9 @@ from django.db import models
 from django.db import models
 from django.urls import reverse
 
+from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 class publishedManager(models.Manager):
     def get_queryset(self):
@@ -21,7 +24,7 @@ class Books(models.Model):
     book_info = models.TextField(default="")
     genre = models.ForeignKey("Genre", on_delete=models.PROTECT, default="1")
     book_img = models.ImageField(upload_to="img/", default="")
-    slug = models.SlugField(max_length=255, default="", unique=True, db_index=True)
+    slug = models.SlugField(max_length=255, default="")
 
     objects = models.Manager()
     published = publishedManager()
@@ -34,6 +37,9 @@ class Genre(models.Model):
     genre = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, default="", db_index=True)
 
+    class Meta:
+        ordering = ["genre"]
+
     def __str__(self):
         return self.genre
 
@@ -42,19 +48,43 @@ class Genre(models.Model):
 
 
 class Customers(models.Model):
-
-    email = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=255, default="")
+    second_name = models.CharField(max_length=255, default="")
+    email = models.EmailField(max_length=255, default="")
     phone_number = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Customers"
+        verbose_name = "Customer"
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from .models import Books
 
 
 class Orders(models.Model):
-    customer_id = models.ForeignKey(Customers, on_delete=models.PROTECT)
-    order_date = models.DateField()
-    total_price = models.CharField(max_length=100)
+    customer_id = models.ForeignKey(User, on_delete=models.PROTECT)
+    book = models.ForeignKey(Books, on_delete=models.PROTECT, default=1)
+    price = models.CharField(max_length=200, default="")
+    quantity = models.IntegerField(default="")
+
+    def __str__(self):
+        return self.book.book_name
 
 
-class OrderItems(models.Model):
-    order_id = models.ForeignKey(Orders, on_delete=models.PROTECT)
-    book_id = models.ForeignKey(Books, on_delete=models.PROTECT)
-    quantity = models.IntegerField()
-    unit_price = models.IntegerField()
+
+class LastOrders(models.Model):
+    STATUS_CHOICES = [
+        ("ожидание", "Ожидание"),
+        ("подтверждено", "Подтверждено"),
+        ("отправлено", "Отправлено"),
+        ("доставлено", "Доставлено"),
+    ]
+    customer_id = models.ForeignKey(User, on_delete=models.PROTECT)
+    basket = models.ManyToManyField(Orders, related_name="orders", blank=True)
+    all_price = models.CharField(max_length=200, default="")
+    created_at = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES)
+    address = models.CharField(max_length=200, default="")
+

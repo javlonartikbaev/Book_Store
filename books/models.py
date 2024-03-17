@@ -64,14 +64,18 @@ from .models import Books
 
 
 class Orders(models.Model):
+    STATUS_CHOICES = [
+        ("куплено", "Куплено"),
+        ("ожидание", "Ожидание")
+    ]
     customer_id = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Books, on_delete=models.PROTECT, default=1)
     price = models.CharField(max_length=200, default="")
     quantity = models.IntegerField(default="")
-
+#
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ожидание")
     def __str__(self):
         return self.book.book_name
-
 
 
 class LastOrders(models.Model):
@@ -87,4 +91,3 @@ class LastOrders(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=100, choices=STATUS_CHOICES)
     address = models.CharField(max_length=200, default="")
-

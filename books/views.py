@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Orders, LastOrders
 
-from django.db.models import Sum,F, ExpressionWrapper, FloatField
+from django.db.models import Sum, F, ExpressionWrapper, FloatField
 from django.utils import timezone
 
 
@@ -121,17 +121,12 @@ def search_books(request):
     return render(request, "books/found_books.html", data)
 
 
-from django.shortcuts import render
-from django.http import JsonResponse
-
-
 def order(request):
     return render(request, "template.html")
 
 
 def submit_order(request):
     if request.method == "POST":
-
 
         book_ids = request.POST.getlist("book_id")
         book_names = request.POST.getlist("book_name")
@@ -144,7 +139,6 @@ def submit_order(request):
                 book_id=book_ids[i],
                 price=book_prices[i],
                 quantity=quantities[i],
-                #                address=address
             )
             order.save()
 
@@ -153,29 +147,29 @@ def submit_order(request):
         return JsonResponse({"error": "Ошибка"}, status=405)
 
 
-
-
 def ordered_books(request):
     orders = Orders.objects.filter(customer_id_id=request.user)
-    total_price = orders.annotate(
-        total_price=ExpressionWrapper(
-            F('price') * F('quantity'), output_field=FloatField()
-        )
-    ).aggregate(total=Sum("total_price"))["total"] or 0
+    total_price = (
+        orders.annotate(
+            total_price=ExpressionWrapper(
+                F("price") * F("quantity"), output_field=FloatField()
+            )
+        ).aggregate(total=Sum("total_price"))["total"]
+        or 0
+    )
     data = {
         "orders": orders,
         "total_price": total_price,
     }
     return render(request, "profile/profile.html", data)
 
+
 def save_order(request):
     if request.method == "POST":
         address = request.POST.get("address")
         total_price = request.POST.get("total_price")
         customer_id = request.user.id
-
         orders = Orders.objects.filter(customer_id=customer_id)
-
         last_order = LastOrders.objects.create(
             customer_id_id=customer_id,
             all_price=total_price,
@@ -183,11 +177,10 @@ def save_order(request):
             status="ожидание",
             address=address,
         )
-
+        last_order.save()
+        orders.update(status="куплено")
         for order in orders:
             last_order.basket.add(order)
-
-
 
         return redirect("home")
     else:

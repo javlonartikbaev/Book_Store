@@ -18,7 +18,7 @@ class BooksAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("customer_id_id", "book_id", "price", "quantity")
+    list_display = ("customer_id_id", "book_id", "price", "quantity", 'status')
 
 
 class GenreAdmin(admin.ModelAdmin):
@@ -26,7 +26,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 
 class LastOrderAdmin(admin.ModelAdmin):
-    list_display = ("customer_id", "display_books", "all_price", "created_at", "status","address")
+    list_display = ("customer_id", "display_books", "all_price", "created_at", "status", "address")
 
     def display_books(self, obj):
         return ", ".join([book.book.book_name for book in obj.basket.all()])

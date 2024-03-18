@@ -148,7 +148,8 @@ def submit_order(request):
 
 
 def ordered_books(request):
-    orders = Orders.objects.filter(customer_id_id=request.user)
+    orders = Orders.objects.filter(customer_id_id=request.user, status="ожидание")
+
     total_price = (
         orders.annotate(
             total_price=ExpressionWrapper(
@@ -157,6 +158,7 @@ def ordered_books(request):
         ).aggregate(total=Sum("total_price"))["total"]
         or 0
     )
+
     data = {
         "orders": orders,
         "total_price": total_price,
@@ -169,20 +171,29 @@ def save_order(request):
         address = request.POST.get("address")
         total_price = request.POST.get("total_price")
         customer_id = request.user.id
-        orders = Orders.objects.filter(customer_id=customer_id)
-        last_order = LastOrders.objects.create(
-            customer_id_id=customer_id,
-            all_price=total_price,
-            created_at=timezone.now(),
-            status="ожидание",
-            address=address,
-        )
-        last_order.save()
-        orders.update(status="куплено")
-        for order in orders:
-            last_order.basket.add(order)
+        orders = Orders.objects.filter(customer_id=customer_id, status="ожидание")
 
-        return redirect("home")
+        if orders:
+            last_order = LastOrders.objects.create(
+                customer_id_id=customer_id,
+                all_price=total_price,
+                created_at=timezone.now(),
+                status="ожидание",
+                address=address,
+            )
+            for order in orders:
+                last_order.basket.add(order)
+
+            orders.update(status="куплено")
+            return redirect("home")
+        else:
+            return HttpResponse("Нет заказов для оформления")
     else:
-
         return render(request, "profile/profile.html")
+
+
+def my_orders(request):
+    user = request.user
+    my_orders = LastOrders.objects.filter(customer_id=user)
+    data = {"my_orders": my_orders}
+    return render(request, "profile/profile.html", data)

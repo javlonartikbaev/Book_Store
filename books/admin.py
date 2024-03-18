@@ -18,7 +18,7 @@ class BooksAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ("customer_id_id", "book_id", "price", "quantity", 'status')
+    list_display = ("customer_id", "book_id", "price", "quantity", 'status')
 
 
 class GenreAdmin(admin.ModelAdmin):

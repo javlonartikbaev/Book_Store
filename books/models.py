@@ -91,3 +91,6 @@ class LastOrders(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=100, choices=STATUS_CHOICES)
     address = models.CharField(max_length=200, default="")
+
+    class Meta:
+        ordering = ["status"]

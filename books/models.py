@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 from django.db import models
 
 from django.db import models
@@ -23,7 +22,7 @@ class Books(models.Model):
     quantity = models.IntegerField()
     book_info = models.TextField(default="")
     genre = models.ForeignKey("Genre", on_delete=models.PROTECT, default="1")
-    book_img = models.ImageField(upload_to="img/", default="")
+    book_img = models.CharField(max_length=255, default="")
     slug = models.SlugField(max_length=255, default="")
 
     objects = models.Manager()
@@ -74,6 +73,7 @@ class Orders(models.Model):
     quantity = models.IntegerField(default="")
 #
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ожидание")
+
     def __str__(self):
         return self.book.book_name
 
@@ -94,3 +94,4 @@ class LastOrders(models.Model):
 
     class Meta:
         ordering = ["status"]
+
